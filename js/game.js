@@ -22,6 +22,8 @@ function journey(pts){pts=Math.max(0,pts);let i=0;while(i<STOPS.length-1&&pts>=S
 function fmtKm(k){k=Math.round(k);if(k<1e9)return k.toLocaleString("en-US")+" KM";return (k/1e9).toFixed(2)+" BILLION KM";}
 // ---------- matching ----------
 const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/&/g," and ").replace(/^(the|a|an) /,"").replace(/[^a-z0-9]+/g,"").replace(/(es|s)$/,"");
+// Six bank groups are tiers 1..6. Fewer groups fall back to LV (no separate Too Clever slot).
+// TOO_CLEVER forces tier 2, the trap. It is not filled to make tier sizes monotonic.
 const LV=[1,3,4,5,6];
 const PROMPTS=BANK.map(([q,a],pi)=>{const g=a.split(" / "),n=g.length,m=new Map(),byTier={};
  const tc=new Set((window.TOO_CLEVER&&TOO_CLEVER[pi]||[]).map(norm));
