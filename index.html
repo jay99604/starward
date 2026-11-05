@@ -1,0 +1,119 @@
+<!doctype html><html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,interactive-widget=resizes-content">
+<title>Starward · The Daily Ascent</title>
+<meta name="description" content="Seven prompts, 25 seconds each. Rarer answers climb higher. A daily space trivia ascent.">
+<meta name="theme-color" content="#04060f"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Starward">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png"><link rel="manifest" href="manifest.json"><link rel="icon" href="icons/icon-192.png">
+<link rel="preload" href="fonts/Silkscreen-Regular.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="stylesheet" href="style.css?v=4">
+</head><body data-screen="home">
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="crt" aria-hidden="true"></div>
+<div id="astro" class="astro" role="button" tabindex="0" aria-label="Your astronaut"><canvas id="astroC" width="16" height="16"></canvas><span id="bubble" class="bubble"></span></div>
+
+<header class="top">
+ <button id="btnMenu" class="ib" aria-label="Menu"><i class="burger"></i></button>
+ <button id="logo" class="logo" aria-label="Starward home">STARWARD</button>
+ <div class="tr"><button id="btnWard" class="ib" aria-label="Wardrobe"><canvas id="wardIcon" width="16" height="16"></canvas></button><button id="btnSound" class="ib snd" aria-label="Toggle sound">♪</button></div>
+</header>
+
+<div id="hud" class="hud panel">
+ <div class="hl"><small>ALTITUDE</small><b id="hAlt" class="cy">0 KM</b></div>
+ <div class="hc"><div id="pips" class="pips"></div><small id="hRound">PROMPT 1 OF 7</small></div>
+ <div class="hr"><small>SCORE</small><b id="hScore" class="pk">0</b></div>
+</div>
+<aside id="ruler" class="ruler" aria-hidden="true"><div class="rail"></div><div id="marks"></div><div id="you" class="you"><span>YOU</span></div></aside>
+
+<main id="app">
+ <!-- HOME -->
+ <section id="home" class="screen on">
+  <div class="hero">
+   <h1 class="title" data-t="STARWARD">STARWARD</h1>
+   <p class="sub">THE DAILY ASCENT</p>
+   <p class="tag">7 prompts · 25 seconds each · rarer answers climb higher</p>
+   <details class="howto panel"><summary>HOW TO PLAY</summary>
+    <ul>
+     <li>Each mission sends you seven prompts. Give <b>one</b> answer to each.</li>
+     <li>You get a 3-second look, then the clock runs for 25 seconds.</li>
+     <li>The fewer people who would think of your answer, the more points it earns, and the higher your astronaut flies.</li>
+     <li>If an answer isn't on our chart you lose nothing. Keep trying until time runs out.</li>
+     <li>Typo? We'll offer a correction. Submit again to lock it in.</li>
+    </ul></details>
+   <button id="btnBegin" class="btn primary pulse">▲ BEGIN ASCENT ▲</button>
+   <p id="homeMission" class="meta"></p>
+   <p id="homeDone" class="meta pk hide"></p>
+   <div class="row"><button id="hArchive" class="btn ghost">ARCHIVE</button><button id="hEndless" class="btn ghost">UNLIMITED ∞</button></div>
+   <p id="homeCd" class="meta dim"></p>
+  </div>
+ </section>
+
+ <!-- PLAY -->
+ <section id="play" class="screen">
+  <div class="col">
+   <div id="card" class="panel card">
+    <p id="cRound" class="eyebrow">PROMPT 1 OF 7</p>
+    <h2 id="cQ" class="q"></h2>
+    <p id="cHint" class="hint">one answer · the rarer the better</p>
+   </div>
+   <div id="clock" class="clock">
+    <svg viewBox="0 0 64 64" class="ring"><circle cx="32" cy="32" r="28" class="rb"/><circle id="ringFg" cx="32" cy="32" r="28" class="rf"/></svg>
+    <span id="clockNum">3</span>
+   </div>
+   <p id="status" class="status" aria-live="polite">CLOCK STARTS IN 3</p>
+   <div id="fix" class="fix" hidden></div>
+   <form id="form" class="form" autocomplete="off">
+    <div class="inwrap"><input id="ans" placeholder="type one answer..." aria-label="Your answer" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" enterkeyhint="send" maxlength="60" disabled>
+    <div id="suggest" class="suggest" hidden></div></div>
+    <button id="send" class="btn primary" type="submit" disabled>TRANSMIT</button>
+    <div class="tbar"><i id="tbar"></i></div>
+   </form>
+   <div id="msg" class="msg" aria-live="polite"></div>
+   <div id="ladder" class="panel ladder" hidden></div>
+   <div id="reveal" class="panel reveal" hidden>
+    <canvas id="rIcon" class="ticon" width="12" height="12"></canvas>
+    <p id="rTier" class="rtier"></p>
+    <p id="rAns" class="rans"></p>
+    <p id="rPts" class="rpts"></p>
+    <p id="rFlav" class="rflav"></p>
+    <button id="btnNext" class="btn primary">ASCEND ▲</button>
+   </div>
+  </div>
+ </section>
+</main>
+
+<!-- RESULTS overlay -->
+<section id="results" class="sheet" aria-hidden="true"><div class="sheetin">
+ <p id="resTitle" class="eyebrow">MISSION #1 COMPLETE</p>
+ <div class="big"><div><small>SCORE</small><b id="resScore" class="pk">0</b></div><div><small>ALTITUDE</small><b id="resAlt" class="cy">0</b></div></div>
+ <p id="resWhere" class="meta"></p>
+ <div class="panel blk"><p class="eyebrow">HOW YOU STACK UP <span class="dim">(est.)</span></p><svg id="dist" viewBox="0 0 300 110" class="chart"></svg><p id="pct" class="meta"></p></div>
+ <div class="panel blk"><p class="eyebrow">MISSION LOG · RARER = HIGHER</p><svg id="logc" viewBox="0 0 300 110" class="chart"></svg></div>
+ <div id="bands" class="bands"></div>
+ <div class="panel blk"><p class="eyebrow">THE HAUL · <span class="dim">tap a round for every answer</span></p><div id="rows"></div></div>
+ <div class="rate"><span class="eyebrow">RATE THIS MISSION</span><span id="stars"></span></div>
+ <button id="btnCopy" class="btn primary">COPY RESULT</button>
+ <div class="row"><button id="rEndless" class="btn ghost">KEEP LAUNCHING ∞</button><button id="rArchive" class="btn ghost">ARCHIVE</button></div>
+ <div class="panel blk"><p class="eyebrow">LOGBOOK</p><div id="logbook" class="stats"></div><p id="resCd" class="meta cy"></p></div>
+ <div class="row"><button id="rSettings" class="btn ghost">SETTINGS</button><button id="rHome" class="btn ghost">HOME</button></div>
+</div></section>
+
+<!-- MENU drawer -->
+<nav id="drawer" class="drawer" aria-hidden="true"><div class="panel din">
+ <p class="eyebrow">STARWARD</p>
+ <button data-act="daily">DAILY MISSION</button>
+ <button data-act="endless">ENDLESS MISSIONS ∞</button>
+ <button data-act="survival">SURVIVAL ♥♥♥</button>
+ <button data-act="archive">ARCHIVE</button>
+ <button data-act="me">MY STARWARD</button>
+ <button data-act="ward">WARDROBE</button>
+ <button data-act="settings">SETTINGS</button>
+ <button data-act="faq">HOW TO PLAY / FAQ</button>
+ <p class="meta dim">Crew missions with friends: coming soon</p>
+</div></nav>
+
+<!-- MODAL -->
+<div id="modal" class="modal" aria-hidden="true"><div class="panel min"><button id="mClose" class="ib x" aria-label="Close">✕</button><div id="mBody"></div></div></div>
+<div id="toast" class="toast"></div>
+<script src="js/data.js?v=4"></script><script src="js/game.js?v=4"></script>
+</body></html>
