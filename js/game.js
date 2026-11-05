@@ -25,7 +25,7 @@ const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").re
 const LV=[1,3,4,5,6];
 const PROMPTS=BANK.map(([q,a],pi)=>{const g=a.split(" / "),n=g.length,m=new Map(),byTier={};
  const tc=new Set((window.TOO_CLEVER&&TOO_CLEVER[pi]||[]).map(norm));
- g.forEach((grp,i)=>{const base=n===1?1:LV[Math.round(i*4/(n-1))];grp.split(",").forEach(ans=>{const al=ans.split("|").map(x=>x.trim()).filter(Boolean);if(!al.length)return;
+ g.forEach((grp,i)=>{const base=n===6?i+1:n===1?1:LV[Math.round(i*4/(n-1))];grp.split(",").forEach(ans=>{const al=ans.split("|").map(x=>x.trim()).filter(Boolean);if(!al.length)return;
   const tier=tc.has(norm(al[0]))?2:base;let added=false;al.forEach(x=>{const k=norm(x);if(k&&!m.has(k)){m.set(k,{tier,label:al[0]});added=true;}});
   if(added)(byTier[tier]=byTier[tier]||[]).push(al[0]);});});
  return{q,m,byTier};});
@@ -39,11 +39,11 @@ function dlev(a,b){const la=a.length,lb=b.length,md=Math.max(la,lb)<=5?1:Math.ma
 function maxEdits(len){if(len<=3)return 0;if(len<=5)return 1;if(len<=9)return 2;return 3;}
 function exact(P,v){return P.m.get(norm(v))||null;}
 function suggest(P,input){const k=norm(input);if(k.length<3)return[];if(P.m.has(k))return[];
- const best=new Map();
+ const best=new Map(),kh=[];for(let c=0;c<k.length;c++){const x=k.charCodeAt(c);kh[x]=(kh[x]||0)+1;}
  for(const [key,v] of P.m){let score=null;
   if(key.startsWith(k))score=0+(key.length-k.length)/100;
   else if(k.startsWith(key)&&key.length>=4)score=.5+(k.length-key.length)/100;
-  else{const allow=maxEdits(Math.max(k.length,key.length));if(allow<=0)continue;const d=dlev(k,key);if(d>allow)continue;score=10+d+Math.abs(key.length-k.length)/50;}
+  else{const allow=maxEdits(Math.max(k.length,key.length));if(allow<=0||Math.abs(key.length-k.length)>allow)continue;let bd=0;const h=kh.slice();for(let c=0;c<key.length;c++){const x=key.charCodeAt(c);h[x]=(h[x]||0)-1;}for(const x in h)bd+=Math.abs(h[x]);if(bd>2*allow)continue;const d=dlev(k,key);if(d>allow)continue;score=10+d+Math.abs(key.length-k.length)/50;}
   const prev=best.get(v.label);if(!prev||score<prev.score)best.set(v.label,{score,label:v.label,tier:v.tier});}
  const r=[...best.values()].sort((a,b)=>a.score-b.score||a.label.length-b.label.length);
  if(!r.length)return[];const out=[r[0]];if(r[1]&&r[1].score-r[0].score<=1.05)out.push(r[1]);return out;}
